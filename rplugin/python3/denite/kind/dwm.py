@@ -13,11 +13,15 @@ class Kind(Openable):
     def __init__(self, vim: Nvim) -> None:
         super().__init__(vim)
 
-        self.name = "window"
-        self.default_action = "jump"
+        self.name = "dwm"
+        self.default_action = "focus"
         self.redraw_actions += ["delete"]
         self.persist_actions += ["delete"]
         self.__kind = Window(vim)
+
+    def action_focus(self, context: UserContext) -> None:
+        self.action_jump(context)
+        self.vim.call("DWM_Focus")
 
     def action_open(self, context: UserContext) -> None:
         self.__kind.open(context["targets"])
@@ -30,3 +34,5 @@ class Kind(Openable):
 
     def action_delete(self, context: UserContext) -> None:
         self.__kind.delete(context["targets"])
+        self.vim.command("wincmd H")
+        self.vim.call("DWM_ResizeMasterPaneWidth")
