@@ -20,7 +20,7 @@ class Window:
         self.vim.command(f"{winnr}wincmd w")
 
     def only(self, target: Candidate) -> None:
-        self.action_jump([target])
+        self.jump(target)
         self.vim.command("only")
 
     def delete(self, targets: Candidates) -> None:
@@ -29,11 +29,11 @@ class Window:
         for target in sorted(
             targets, key=attrgetter("action__tabnr", "action__winnr"), reverse=True,
         ):
-            self.action_jump({"targets": [target]})
+            self.jump(target)
             self.vim.command("close")
 
         if current_tabnr != self.vim.call("tabpagenr"):
             self.vim.command(f"tabnext {current_tabnr}")
 
-    def _action_props(self, target: Candidate) -> (int, int):
+    def _action_props(self, target: Candidate) -> typing.Tuple[int, int]:
         return target["action__tabnr"], target["action__winnr"]
