@@ -4,7 +4,7 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).parent.parent.parent.resolve()))
 
 import typing
-from denite_window.kind import Window
+from vim_denite_window.kind import Window
 from denite.kind.openable import Kind as Openable
 from denite.util import Nvim, UserContext, Candidate
 
