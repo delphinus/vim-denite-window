@@ -1,4 +1,4 @@
-import typing
+from typing import List
 from denite.util import Nvim, Candidates
 
 WINDOW_HIGHLIGHT_SYNTAX = [
@@ -12,10 +12,24 @@ class Window:
     def __init__(self, vim: Nvim) -> None:
         self.vim = vim
 
-    def get_windows(self, tabnr: int, no_current=False, need_marks=True) -> Candidates:
-        max_winnr = self.vim.call("tabpagewinnr", tabnr, "$")
-        current_winnr = self.vim.call("tabpagewinnr", tabnr)
-        alt_winnr = self.vim.call("tabpagewinnr", tabnr, "#")
+    def get_all_windows(self, no_current: bool = False) -> Candidates:
+        current_tabnr: int = self.vim.call("tabpagenr")
+        max_tabnr: int = self.vim.call("tabpagenr", "$")
+        return sum(
+            [
+                self.get_windows(tabnr, current_tabnr, no_current)
+                for tabnr in range(1, max_tabnr + 1)
+            ],
+            [],
+        )
+
+    def get_windows(
+        self, tabnr: int, current_tabnr: int = -1, no_current: bool = False
+    ) -> Candidates:
+        need_current_tab_list = tabnr == current_tabnr
+        max_winnr: int = self.vim.call("tabpagewinnr", tabnr, "$")
+        current_winnr: int = self.vim.call("tabpagewinnr", tabnr)
+        alt_winnr: int = self.vim.call("tabpagewinnr", tabnr, "#")
 
         def winmark(winnr: int) -> str:
             return (
@@ -28,15 +42,17 @@ class Window:
                     if winnr == alt_winnr
                     else " "
                 )
-                if need_marks
+                if need_current_tab_list
                 else " "
             )
 
         def bufname(bufnr: int) -> str:
-            bufname = self.vim.call("bufname", bufnr)
+            bufname: str = self.vim.call("bufname", bufnr)
             return bufname if bufname != "" else "[No Name]"
 
-        bufnames = [bufname(x) for x in self.vim.call("tabpagebuflist", tabnr)]
+        bufnames: List[str] = [
+            bufname(x) for x in self.vim.call("tabpagebuflist", tabnr)
+        ]
 
         return [
             {
@@ -46,7 +62,7 @@ class Window:
                 "action__winnr": winnr,
             }
             for winnr in range(1, max_winnr + 1)
-            if not no_current or winnr != current_winnr
+            if not (need_current_tab_list and winnr == current_winnr and no_current)
         ]
 
     def highlight(self, syntax_name: str) -> None:

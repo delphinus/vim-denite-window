@@ -22,18 +22,11 @@ class Source(Base):
         self.__candidates = []
         current_tabnr = self.vim.call("tabpagenr")
         options = self._options(context)
-        if options["all"]:
-            max_tabnr = self.vim.call("tabpagenr", "$")
-            for tabnr in range(1, max_tabnr + 1):
-                need_marks = tabnr == current_tabnr
-                no_current = need_marks and options["no-current"]
-                self.__candidates += self.__source.get_windows(
-                    tabnr, no_current, need_marks
-                )
-        else:
-            self.__candidates = self.__source.get_windows(
-                current_tabnr, options["no-current"], True
-            )
+        self.__candidates = (
+            self.__source.get_all_windows(options["no-current"])
+            if options["all"]
+            else self.__source.get_windows(current_tabnr)
+        )
 
     def gather_candidates(self, context: UserContext) -> Candidates:
         return self.__candidates
