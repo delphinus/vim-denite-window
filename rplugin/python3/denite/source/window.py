@@ -61,12 +61,6 @@ class Source(Base):
         current_winnr = self.vim.call("tabpagewinnr", tabnr)
         alt_winnr = self.vim.call("tabpagewinnr", tabnr, "#")
 
-        def bufname(bufnr: int) -> str:
-            bufname = self.vim.call("bufname", bufnr)
-            return bufname if bufname != "" else "[No Name]"
-
-        bufnames = [bufname(x) for x in self.vim.call("tabpagebuflist", tabnr)]
-
         def winmark(winnr: int) -> str:
             return (
                 (
@@ -81,6 +75,12 @@ class Source(Base):
                 if need_marks
                 else " "
             )
+
+        def bufname(bufnr: int) -> str:
+            bufname = self.vim.call("bufname", bufnr)
+            return bufname if bufname != "" else "[No Name]"
+
+        bufnames = [bufname(x) for x in self.vim.call("tabpagebuflist", tabnr)]
 
         for winnr in range(1, max_winnr + 1):
             if no_current and winnr == current_winnr:
