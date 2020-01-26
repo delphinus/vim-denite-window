@@ -1,8 +1,12 @@
-import typing
+import sys
+from pathlib import Path
 
+sys.path.append(str(Path(__file__).parent.parent.parent.resolve()))
+
+import typing
+from denite_window.kind import Window
 from denite.kind.openable import Kind as Openable
 from denite.util import Nvim, UserContext, Candidate
-from operator import attrgetter
 
 
 class Kind(Openable):
@@ -12,37 +16,17 @@ class Kind(Openable):
         self.name = "window"
         self.default_action = "jump"
         self.redraw_actions += ["delete"]
-        self.persist_actions += ["delete", "preview"]
+        self.persist_actions += ["delete"]
+        self.__kind = Window(vim)
 
     def action_open(self, context: UserContext) -> None:
-        for target in context["targets"]:
-            (tabnr, winnr) = self._action_props(target)
-            buffers = self.vim.call("tabpagebuflist", tabnr)
-            bufnr = buffers[winnr - 1]
-            self.vim.command(f"buffer {bufnr}")
+        self.__kind.open(context["targets"])
 
     def action_jump(self, context: UserContext) -> None:
-        (tabnr, winnr) = self._action_props(context["targets"][0])
-        self.vim.command(f"tabnext {tabnr}")
-        self.vim.command(f"{winnr}wincmd w")
+        self.__kind.jump(context["targets"][0])
 
     def action_only(self, context: UserContext) -> None:
-        self.action_jump(context)
-        self.vim.command("only")
+        self.__kind.only(context["targets"][0])
 
     def action_delete(self, context: UserContext) -> None:
-        current_tabnr = self.vim.call("tabpagenr")
-
-        for target in sorted(
-            context["targets"],
-            key=attrgetter("action__tabnr", "action__winnr"),
-            reverse=True,
-        ):
-            self.action_jump({"targets": [target]})
-            self.vim.command("close")
-
-        if current_tabnr != self.vim.call("tabpagenr"):
-            self.vim.command(f"tabnext {current_tabnr}")
-
-    def _action_props(self, target: Candidate) -> (int, int):
-        return target["action__tabnr"], target["action__winnr"]
+        self.__kind.delete(context["targets"])
