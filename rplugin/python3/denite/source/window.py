@@ -1,3 +1,4 @@
+import typing
 from denite.base.source import Base
 from denite.util import Nvim, UserContext, Candidate
 
@@ -17,38 +18,17 @@ class Source(Base):
         self.__candidates: Candidates = []
 
     def on_init(self, context: UserContext) -> None:
-        # TODO: deal with other tabs
-        tabnr = self.vim.call("tabpagenr")
-        max_winnr = self.vim.call("tabpagewinnr", tabnr, "$")
-        current_winnr = self.vim.call("tabpagewinnr", tabnr)
-        alt_winnr = self.vim.call("tabpagewinnr", tabnr, "#")
-
-        def bufname(bufnr: int) -> str:
-            bufname = self.vim.call("bufname", bufnr)
-            return bufname if bufname != "" else "[No Name]"
-
-        bufnames = [bufname(x) for x in self.vim.call("tabpagebuflist", tabnr)]
-
-        def winmark(winnr: int) -> str:
-            return (
-                "$"
-                if winnr == max_winnr
-                else "%"
-                if winnr == current_winnr
-                else "#"
-                if winnr == alt_winnr
-                else " "
-            )
-
-        self.__candidates = [
-            {
-                "word": bufnames[x],
-                "abbr": f"{tabnr}: [{x+1}/{max_winnr}] {winmark(x+1)} {bufnames[x]}",
-                "action__tabnr": tabnr,
-                "action__winnr": x + 1,
-            }
-            for x in range(max_winnr)
-        ]
+        self.__candidates: Candidates = []
+        current_tabnr = self.vim.call("tabpagenr")
+        options = self._options(context)
+        if options["all"]:
+            max_tabnr = self.vim.call("tabpagenr", "$")
+            for tabnr in range(1, max_tabnr + 1):
+                need_marks = tabnr == current_tabnr
+                no_current = need_marks and options["no-current"]
+                self._get_windows(tabnr, no_current, need_marks)
+        else:
+            self._get_windows(current_tabnr, options["no-current"], True)
 
     def gather_candidates(self, context: UserContext) -> Candidate:
         return self.__candidates
@@ -69,3 +49,47 @@ class Source(Base):
             self.vim.command(
                 "highlight default link {0} {1}".format(syn_name("name"), syn["link"])
             )
+
+    def _options(self, context: UserContext) -> typing.Dict[str, bool]:
+        return {
+            "no-current": "no-current" in context["args"],
+            "all": "all" in context["args"],
+        }
+
+    def _get_windows(self, tabnr: int, no_current: bool, need_marks: bool) -> None:
+        max_winnr = self.vim.call("tabpagewinnr", tabnr, "$")
+        current_winnr = self.vim.call("tabpagewinnr", tabnr)
+        alt_winnr = self.vim.call("tabpagewinnr", tabnr, "#")
+
+        def bufname(bufnr: int) -> str:
+            bufname = self.vim.call("bufname", bufnr)
+            return bufname if bufname != "" else "[No Name]"
+
+        bufnames = [bufname(x) for x in self.vim.call("tabpagebuflist", tabnr)]
+
+        def winmark(winnr: int) -> str:
+            return (
+                (
+                    "$"
+                    if winnr == max_winnr
+                    else "%"
+                    if winnr == current_winnr
+                    else "#"
+                    if winnr == alt_winnr
+                    else " "
+                )
+                if need_marks
+                else " "
+            )
+
+        for winnr in range(1, max_winnr + 1):
+            if no_current and winnr == current_winnr:
+                continue
+            self.__candidates += [
+                {
+                    "word": bufnames[winnr - 1],
+                    "abbr": f"{tabnr}: [{winnr}/{max_winnr}] {winmark(winnr)} {bufnames[winnr-1]}",
+                    "action__tabnr": tabnr,
+                    "action__winnr": winnr,
+                }
+            ]
