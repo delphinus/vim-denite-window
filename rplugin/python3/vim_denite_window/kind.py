@@ -1,5 +1,5 @@
 import typing
-from operator import attrgetter
+from operator import itemgetter
 from denite.util import Nvim, Candidate, Candidates
 
 
@@ -27,7 +27,7 @@ class Window:
         current_tabnr = self.vim.call("tabpagenr")
 
         for target in sorted(
-            targets, key=attrgetter("action__tabnr", "action__winnr"), reverse=True,
+            targets, key=itemgetter("action__tabnr", "action__winnr"), reverse=True,
         ):
             self.jump(target)
             self.vim.command("close")
