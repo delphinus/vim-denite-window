@@ -23,7 +23,6 @@ def test_jump(vim: Nvim) -> None:
     w = Window(vim)
     w.jump({"action__tabnr": 1, "action__winnr": 3})  # file1.txt
     assert Path(vim.current.buffer.name).name == "file1.txt"
-    _close_all(vim, 6)
 
 
 def test_only(vim: Nvim) -> None:
@@ -34,7 +33,6 @@ def test_only(vim: Nvim) -> None:
     w.only({"action__tabnr": 1, "action__winnr": 1})  # file3.txt
     assert vim.call("winnr", "$") == 1
     assert Path(vim.current.buffer.name).name == "file3.txt"
-    _close_all(vim, 1)
 
 
 def test_delete(vim: Nvim) -> None:
@@ -57,10 +55,3 @@ def test_delete(vim: Nvim) -> None:
     assert vim.call("winnr", "$") == 1
     assert Path(vim.tabpages[0].window.buffer.name).name == "file1.txt"
     assert Path(vim.tabpages[1].window.buffer.name).name == "file4.txt"
-    _close_all(vim, 2)
-
-
-def _close_all(vim, num):
-    for x in range(num - 1):
-        vim.command("close")
-    vim.command("enew")

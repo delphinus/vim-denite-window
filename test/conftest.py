@@ -1,14 +1,14 @@
 import json
 import os
 
-import pytest
-
-import pynvim
-
-pynvim.setup_logging("test")
+from pynvim import attach, setup_logging
+from pytest import fixture
 
 
-@pytest.fixture
+setup_logging("test")
+
+
+@fixture
 def vim():
     child_argv = os.environ.get("NVIM_CHILD_ARGV")
     listen_address = os.environ.get("NVIM_LISTEN_ADDRESS")
@@ -16,9 +16,17 @@ def vim():
         child_argv = '["nvim", "-u", "NONE", "--embed", "--headless"]'
 
     if child_argv is not None:
-        editor = pynvim.attach("child", argv=json.loads(child_argv))
+        vim = attach("child", argv=json.loads(child_argv))
     else:
         assert listen_address is None or listen_address != ""
-        editor = pynvim.attach("socket", path=listen_address)
+        vim = attach("socket", path=listen_address)
 
-    return editor
+    yield vim
+
+    if len(vim.tabpages) > 2:
+        for tabpage in vim.tabpages[1 : len(vim.tabpages)]:
+            vim.current.tabpage(tabpage)
+            vim.command("tabclose")
+
+    vim.command("only")
+    vim.command("enew")
