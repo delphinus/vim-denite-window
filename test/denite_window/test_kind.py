@@ -5,13 +5,14 @@ print(str(Path(__file__).parent.parent.parent / "rplugin/python3"))
 sys.path.append(str(Path(__file__).parent.parent.parent / "rplugin/python3"))
 
 from vim_denite_window.kind import Window
+from pynvim import Nvim
 import logging
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-def test_jump(vim):
+def test_jump(vim: Nvim) -> None:
     vim.command("edit file1.txt")
     vim.command("split file2.txt")
     vim.command("split file3.txt")
@@ -25,7 +26,7 @@ def test_jump(vim):
     _close_all(vim, 6)
 
 
-def test_only(vim):
+def test_only(vim: Nvim) -> None:
     vim.command("edit file1.txt")
     vim.command("split file2.txt")
     vim.command("split file3.txt")
@@ -36,7 +37,7 @@ def test_only(vim):
     _close_all(vim, 1)
 
 
-def test_delete(vim):
+def test_delete(vim: Nvim) -> None:
     vim.command("edit file1.txt")
     vim.command("split file2.txt")
     vim.command("split file3.txt")
