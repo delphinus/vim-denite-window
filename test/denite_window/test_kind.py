@@ -13,45 +13,45 @@ logger.setLevel(logging.INFO)
 
 
 def test_jump(vim: Nvim) -> None:
-    vim.command("edit file1.txt")
-    vim.command("split file2.txt")
-    vim.command("split file3.txt")
+    vim.command("edit text1")
+    vim.command("split text2")
+    vim.command("split text3")
     vim.command("tabnew")
-    vim.command("edit file4.txt")
-    vim.command("split file5.txt")
-    vim.command("split file6.txt")
+    vim.command("edit text4")
+    vim.command("split text5")
+    vim.command("split text6")
     w = Window(vim)
-    w.jump({"action__tabnr": 1, "action__winnr": 3})  # file1.txt
-    assert Path(vim.current.buffer.name).name == "file1.txt"
+    w.jump({"action__tabnr": 1, "action__winnr": 3})  # text1
+    assert Path(vim.current.buffer.name).name == "text1"
 
 
 def test_only(vim: Nvim) -> None:
-    vim.command("edit file1.txt")
-    vim.command("split file2.txt")
-    vim.command("split file3.txt")
+    vim.command("edit text1")
+    vim.command("split text2")
+    vim.command("split text3")
     w = Window(vim)
-    w.only({"action__tabnr": 1, "action__winnr": 1})  # file3.txt
+    w.only({"action__tabnr": 1, "action__winnr": 1})  # text3
     assert vim.call("winnr", "$") == 1
-    assert Path(vim.current.buffer.name).name == "file3.txt"
+    assert Path(vim.current.buffer.name).name == "text3"
 
 
 def test_delete(vim: Nvim) -> None:
-    vim.command("edit file1.txt")
-    vim.command("split file2.txt")
-    vim.command("split file3.txt")
+    vim.command("edit text1")
+    vim.command("split text2")
+    vim.command("split text3")
     vim.command("tabnew")
-    vim.command("edit file4.txt")
-    vim.command("split file5.txt")
-    vim.command("split file6.txt")
+    vim.command("edit text4")
+    vim.command("split text5")
+    vim.command("split text6")
     w = Window(vim)
     w.delete(
         [
-            {"action__tabnr": 1, "action__winnr": 1},  # file3.txt
-            {"action__tabnr": 1, "action__winnr": 2},  # file2.txt
-            {"action__tabnr": 2, "action__winnr": 1},  # file6.txt
-            {"action__tabnr": 2, "action__winnr": 2},  # file5.txt
+            {"action__tabnr": 1, "action__winnr": 1},  # text3
+            {"action__tabnr": 1, "action__winnr": 2},  # text2
+            {"action__tabnr": 2, "action__winnr": 1},  # text6
+            {"action__tabnr": 2, "action__winnr": 2},  # text5
         ]
     )
     assert vim.call("winnr", "$") == 1
-    assert Path(vim.tabpages[0].window.buffer.name).name == "file1.txt"
-    assert Path(vim.tabpages[1].window.buffer.name).name == "file4.txt"
+    assert Path(vim.tabpages[0].window.buffer.name).name == "text1"
+    assert Path(vim.tabpages[1].window.buffer.name).name == "text4"

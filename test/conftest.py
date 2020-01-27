@@ -9,7 +9,7 @@ setup_logging("test")
 
 
 @fixture
-def vim():
+def vim() -> None:
     child_argv = os.environ.get("NVIM_CHILD_ARGV")
     listen_address = os.environ.get("NVIM_LISTEN_ADDRESS")
     if child_argv is None and listen_address is None:
@@ -21,12 +21,13 @@ def vim():
         assert listen_address is None or listen_address != ""
         vim = attach("socket", path=listen_address)
 
+    vim.command("autocmd BufEnter :set bufhidden=wipe<CR>")
+
     yield vim
 
-    if len(vim.tabpages) > 2:
-        for tabpage in vim.tabpages[1 : len(vim.tabpages)]:
-            vim.current.tabpage(tabpage)
-            vim.command("tabclose")
+    if len(vim.windows) > 1:
+        for window in vim.windows[1 : len(vim.windows)]:
+            vim.current.window = window
+            vim.command("close")
 
-    vim.command("only")
     vim.command("enew")
