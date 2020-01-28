@@ -9,7 +9,7 @@ install:
   - git clone https://github.com/Shougo/denite.nvim /tmp/denite.nvim
 
 script:
-  - SRC=$(find . -name '*.py' | perl -pe 's,^\./,,')
+  - SRC=$(find . -name '*.py' | grep -v test | perl -pe 's,^\./,,')
   - |-
     RESULT=$(
       export MYPYPATH=/tmp/denite.nvim/rplugin/python3:rplugin/python3
