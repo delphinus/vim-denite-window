@@ -4,6 +4,11 @@ language: python
 python:
   - 3.7
 
+before_install:
+  - sudo add-apt-repository ppa:neovim-ppa/stable -y
+  - sudo apt-get update -y
+  - sudo apt-get install neovim -y
+
 install:
   - pip install mypy pynvim pytest
   - git clone https://github.com/Shougo/denite.nvim /tmp/denite.nvim
