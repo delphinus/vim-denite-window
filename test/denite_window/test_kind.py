@@ -12,6 +12,19 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
+def test_open(vim: Nvim) -> None:
+    vim.command("edit text1")
+    vim.command("split text2")
+    vim.command("split text3")
+    w = Window(vim)
+    w.open({"action__tabnr": 1, "action__winnr": 3})  # text1
+    assert [Path(x.buffer.name).name for x in vim.windows] == [
+        "text1",
+        "text2",
+        "text1",
+    ]
+
+
 def test_jump(vim: Nvim) -> None:
     vim.command("edit text1")
     vim.command("split text2")

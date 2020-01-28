@@ -7,12 +7,11 @@ class Window:
     def __init__(self, vim: Nvim) -> None:
         self.vim = vim
 
-    def open(self, targets: Candidates) -> None:
-        for target in targets:
-            (tabnr, winnr) = self._action_props(target)
-            buffers = self.vim.call("tabpagebuflist", tabnr)
-            bufnr = buffers[winnr - 1]
-            self.vim.command(f"buffer {bufnr}")
+    def open(self, target: Candidate) -> None:
+        (tabnr, winnr) = self._action_props(target)
+        buffers = self.vim.call("tabpagebuflist", tabnr)
+        bufnr = buffers[winnr - 1]
+        self.vim.command(f"buffer {bufnr}")
 
     def jump(self, target: Candidate) -> None:
         (tabnr, winnr) = self._action_props(target)
