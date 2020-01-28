@@ -16,7 +16,7 @@ def vim() -> None:
     child_argv = os.environ.get("NVIM_CHILD_ARGV")
     listen_address = os.environ.get("NVIM_LISTEN_ADDRESS")
     if child_argv is None and listen_address is None:
-        child_argv = '["nvim", "-u", "NONE", "--embed", "--headless"]'
+        child_argv = '["nvim", "-u", "NONE", "-i", "NONE", "--embed", "--headless"]'
 
     if child_argv is not None:
         vim = attach("child", argv=json.loads(child_argv))
