@@ -4,8 +4,11 @@ import os
 from pynvim import attach, setup_logging
 from pytest import fixture
 
+import logging
 
 setup_logging("test")
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 
 @fixture
@@ -24,6 +27,8 @@ def vim() -> None:
     vim.command("autocmd BufEnter :set bufhidden=wipe<CR>")
 
     yield vim
+
+    logger.info("teardown")
 
     if len(vim.windows) > 1:
         for window in vim.windows[1 : len(vim.windows)]:
