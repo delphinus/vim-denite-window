@@ -19,7 +19,6 @@ class Source(Base):
         self.__source = Window(vim)
 
     def on_init(self, context: UserContext) -> None:
-        self.__candidates = []
         current_tabnr = self.vim.call("tabpagenr")
         options = self._options(context)
         self.__candidates = (
