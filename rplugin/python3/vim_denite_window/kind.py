@@ -1,4 +1,4 @@
-import typing
+from typing import Tuple
 from operator import itemgetter
 from denite.util import Nvim, Candidate, Candidates
 
@@ -34,5 +34,5 @@ class Window:
         if current_tabnr != self.vim.call("tabpagenr"):
             self.vim.command(f"tabnext {current_tabnr}")
 
-    def _action_props(self, target: Candidate) -> typing.Tuple[int, int]:
+    def _action_props(self, target: Candidate) -> Tuple[int, int]:
         return target["action__tabnr"], target["action__winnr"]

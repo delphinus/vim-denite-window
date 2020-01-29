@@ -3,7 +3,7 @@ from pathlib import Path
 
 sys.path.append(str(Path(__file__).parent.parent.parent.resolve()))
 
-import typing
+from typing import Dict
 from vim_denite_window.source import Window
 from denite.base.source import Base
 from denite.util import Nvim, UserContext, Candidate, Candidates
@@ -33,7 +33,7 @@ class Source(Base):
     def highlight(self) -> None:
         self.__source.highlight(self.syntax_name)
 
-    def _options(self, context: UserContext) -> typing.Dict[str, bool]:
+    def _options(self, context: UserContext) -> Dict[str, bool]:
         return {
             "no-current": "no-current" in context["args"],
             "all": "all" in context["args"],
