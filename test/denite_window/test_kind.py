@@ -1,7 +1,6 @@
 import sys
 from pathlib import Path
 
-print(str(Path(__file__).parent.parent.parent / "rplugin/python3"))
 sys.path.append(str(Path(__file__).parent.parent.parent / "rplugin/python3"))
 
 from vim_denite_window.kind import Window
