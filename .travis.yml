@@ -1,0 +1,31 @@
+---
+language: python
+
+python:
+  - 3.7
+
+before_install:
+  - sudo add-apt-repository ppa:neovim-ppa/stable -y
+  - sudo apt-get update -y
+  - sudo apt-get install neovim -y
+
+install:
+  - pip install mypy pynvim pytest
+  - git clone https://github.com/Shougo/denite.nvim /tmp/denite.nvim
+
+script:
+  - SRC=$(find . -name '*.py' | grep -v test | perl -pe 's,^\./,,')
+  - |-
+    RESULT=$(
+      export MYPYPATH=/tmp/denite.nvim/rplugin/python3:rplugin/python3
+      for i in $SRC; do
+        mypy --strict $i | grep "^$i" | tee /dev/tty
+      done
+    )
+  - |-
+    if [[ -n $RESULT ]]; then
+      exit 1
+    fi
+  - |-
+    export PYTHONPATH=/tmp/denite.nvim/rplugin/python3:rplugin/python3
+    python3 -m pytest -v

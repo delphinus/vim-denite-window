@@ -3,7 +3,6 @@ from pathlib import Path
 
 sys.path.append(str(Path(__file__).parent.parent.parent.resolve()))
 
-import typing
 from vim_denite_window.kind import Window
 from denite.kind.openable import Kind as Openable
 from denite.util import Nvim, UserContext, Candidate
@@ -15,8 +14,8 @@ class Kind(Openable):
 
         self.name = "dwm"
         self.default_action = "focus"
-        self.redraw_actions += ["delete"]
-        self.persist_actions += ["delete"]
+        self.redraw_actions += ["delete"]  # type: ignore
+        self.persist_actions += ["delete"]  # type: ignore
         self.__kind = Window(vim)
 
     def action_focus(self, context: UserContext) -> None:
