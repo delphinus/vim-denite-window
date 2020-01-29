@@ -35,4 +35,4 @@ def vim() -> None:
             vim.current.window = window
             vim.command("close")
 
-    vim.command("enew")
+    vim.command("enew!")

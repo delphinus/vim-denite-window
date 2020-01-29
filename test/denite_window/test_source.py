@@ -5,7 +5,7 @@ sys.path.append(str(Path(__file__).parent.parent.parent / "rplugin/python3"))
 
 from vim_denite_window.source import Window
 from pynvim import Nvim
-from typing import List, Any, cast
+from typing import Any, Dict, List, cast
 import logging
 
 logger = logging.getLogger(__name__)
@@ -116,3 +116,49 @@ def test_get_all_windows(vim: Nvim) -> None:
             for x in cast(List[Any], c["expected"])
         ]
         assert expected == w.get_all_windows(c["no_current"])
+
+
+def test_highlight(vim: Nvim) -> None:
+    # vim.current.buffer.add_highlight("Test", 0)
+    vim.command("syntax match Test /.*/")
+    vim.command("highlight default link Test Statement")
+    w = Window(vim)
+    w.highlight("Test")
+    logger.info(vim.command_output("syn"))
+    for c in [
+        {"line": "12: [34/56] % text1", "expected": ["12: [34/56] ", "% ", "text1"],},
+    ]:
+        vim.command("enew!")
+        vim.current.buffer[0] = c["line"]
+        logger.info(vim.command_output("echo synID(1, 1, 0)"))
+        assert getSyntaxChars(vim) == [
+            {"name": "Test_Prefix", "chars": c["expected"][0]},
+            {"name": "Test_Mark", "chars": c["expected"][1]},
+            {"name": "Test_Title", "chars": c["expected"][2]},
+        ]
+
+
+def getSyntaxChars(vim: Nvim) -> List[Dict[str, str]]:
+    def synName(col: int) -> str:
+        synId: int = vim.call("synID", 1, col + 1, True)
+        syn: int = vim.call("synIDtrans", synId)
+        logger.info([col + 1, synId, syn, vim.call("synIDattr", syn, "name")])
+        return cast(str, vim.call("synIDattr", syn, "name"))
+
+    name = synName(0)
+    line: str = vim.current.buffer[0]
+    logger.info(line)
+    chars: List[Dict[str, str]] = []
+
+    for c, char in enumerate(line):
+        if c == 0:
+            chars = [{"name": name, "chars": char}]
+        else:
+            n = synName(c)
+            if n == name:
+                chars[-1]["chars"] += char
+            else:
+                chars += [{"name": n, "chars": char}]
+                name = n
+
+    return chars
