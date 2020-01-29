@@ -24,7 +24,7 @@ class Source(Base):
         self.__candidates = (
             self.__source.get_all_windows(options["no-current"])
             if options["all"]
-            else self.__source.get_windows(current_tabnr)
+            else self.__source.get_windows(current_tabnr, options["no-current"])
         )
 
     def gather_candidates(self, context: UserContext) -> Candidates:
