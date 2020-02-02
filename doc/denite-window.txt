@@ -1,0 +1,79 @@
+*denite-window.txt*		 denite.nvim's sources for windows and dwm.vim
+
+Version: 0.1.0
+Author:  JINNOUCHI Yasushi <me@delphinus.dev>
+License: MIT
+
+CONTENTS						*denite-window-contents*
+
+Introduction			|denite-window-introduction|
+Sources				|denite-window-sources|
+Actions				|denite-window-actions|
+Changelog			|denite-window-changelog|
+
+==============================================================================
+INTRODUCTION					    *denite-window-introduction*
+
+*denite-window* provides a source for *denite.nvim* to manage windows. It is one
+of lacked sources that the past plugin *unite.vim* has had.
+
+https://github.com/Shougo/denite.nvim
+https://github.com/Shougo/unite.vim
+
+This has features below.
+
+* List up & query windoes on the tab / all tabs.
+* Open the buffer on the selected window into the current one.
+* Jump into the selected window.
+* Close all the selected windows, or all except the one.
+* Delete all the selected windows.
+
+Also this provides an integration for *dwm.vim* that is a window manager plugin.
+
+https://github.com/spolu/dwm.vim
+
+* Focus the selected window by |:DWM_Focus|.
+
+==============================================================================
+SOURCES							 *denite-window-sources*
+
+							  *denite-source-window*
+window		Gather windows as candidates. This accepts arguments below
+		with no paticular order.
+
+		Source arguments:
+		1. "no-current" removes the current window from candidates.
+		2. "all" gathers windows on all tabs.
+
+
+							     *denite-source-dwm*
+dwm		Work samely as the "window" source. But this has no
+		arguments.
+
+==============================================================================
+ACTIONS							 *denite-window-actions*
+
+open
+		Open the selected window into the current window.
+
+jump (default for the "window" source)
+		Jump into the selected window.
+
+only
+		Close all windows except the current one. This executes |:only|.
+
+delete
+		Close all the selected windows.
+
+focus (default for the "dwm" source)
+		Jump into the selected window and execute |:DWM_Focus|. This
+		actions is available only for the "dwm" source.
+
+==============================================================================
+CHANGELOG					       *denite-window-changelog*
+
+0.1.0		2020-02-02
+		- Initial version.
+
+==============================================================================
+vim:tw=78:ts=8:ft=help:norl:noet:fen:
