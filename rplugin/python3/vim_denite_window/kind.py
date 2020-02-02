@@ -9,7 +9,7 @@ class Window:
 
     def open(self, target: Candidate) -> None:
         (tabnr, winnr) = self._action_props(target)
-        buffers = self.vim.call("tabpagebuflist", tabnr)
+        buffers = self.vim.funcs.tabpagebuflist(tabnr)
         bufnr = buffers[winnr - 1]
         self.vim.command(f"buffer {bufnr}")
 
@@ -23,7 +23,7 @@ class Window:
         self.vim.command("only")
 
     def delete(self, targets: Candidates) -> None:
-        current_tabnr = self.vim.call("tabpagenr")
+        current_tabnr = self.vim.funcs.tabpagenr()
 
         for target in sorted(
             targets, key=itemgetter("action__tabnr", "action__winnr"), reverse=True,
@@ -31,7 +31,7 @@ class Window:
             self.jump(target)
             self.vim.command("close")
 
-        if current_tabnr != self.vim.call("tabpagenr"):
+        if current_tabnr != self.vim.funcs.tabpagenr():
             self.vim.command(f"tabnext {current_tabnr}")
 
     def _action_props(self, target: Candidate) -> Tuple[int, int]:
