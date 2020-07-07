@@ -22,7 +22,7 @@ https://github.com/Shougo/unite.vim
 
 This has features below.
 
-* List up & query windoes on the tab / all tabs.
+* List up & query windows on the tab / all tabs.
 * Open the buffer on the selected window into the current one.
 * Jump into the selected window.
 * Close all the selected windows, or all except the one.
