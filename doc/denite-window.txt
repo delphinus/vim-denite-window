@@ -14,8 +14,8 @@ Changelog			|denite-window-changelog|
 ==============================================================================
 INTRODUCTION					    *denite-window-introduction*
 
-*denite-window* provides a source for *denite.nvim* to manage windows. It is one
-of lacked sources that the past plugin *unite.vim* has had.
+*denite-window* provides a source for |denite.nvim| to manage windows. It is one
+of lacked sources that the past plugin |unite.vim| has had.
 
 https://github.com/Shougo/denite.nvim
 https://github.com/Shougo/unite.vim
@@ -28,7 +28,7 @@ This has features below.
 * Close all the selected windows, or all except the one.
 * Delete all the selected windows.
 
-Also this provides an integration for *dwm.vim* that is a window manager plugin.
+Also this provides an integration for |dwm| that is a window manager plugin.
 
 https://github.com/spolu/dwm.vim
 
