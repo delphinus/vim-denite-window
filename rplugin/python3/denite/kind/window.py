@@ -14,8 +14,8 @@ class Kind(Openable):
 
         self.name = "window"
         self.default_action = "jump"
-        self.redraw_actions += ["delete"]  # type: ignore
-        self.persist_actions += ["delete"]  # type: ignore
+        self.redraw_actions += ["delete"]
+        self.persist_actions += ["delete"]
         self.__kind = Window(vim)
 
     def action_open(self, context: UserContext) -> None:
